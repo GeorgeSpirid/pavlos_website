@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA/RNA Sequence Converter with Hydrogen Bonds</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #container { max-width: 300px; margin: auto; }
+        input, select, button { margin-top: 10px; width: 100%; padding: 10px; }
+        .output { margin-top: 20px; font-weight: bold; color: #333; }
+        .error { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>DNA/RNA Sequence Converter</h1>
+        <select id="choice">
+            <option value="DNA">DNA</option>
+            <option value="RNA">RNA</option>
+        </select>
+        <input type="text" id="sequence" placeholder="Enter sequence (A, T, G, C, U)" />
+        <button onclick="convertSequence()">Convert</button>
+        <div id="output" class="output"></div>
+        <div id="hydrogenBonds" class="output"></div>
+    </div>
+
+    <script>
+        const dnaSequence = { 'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G' };
+        const rnaSequence = { 'A': 'U', 'U': 'A', 'G': 'C', 'C': 'G' };
+
+        function convertSequence() {
+            const choice = document.getElementById("choice").value;
+            const sequence = document.getElementById("sequence").value.toUpperCase();
+            let complement = '';
+            let hydrogenBondCount = 0;
+
+            // Define valid characters for each type
+            const validChars = choice === 'DNA' ? ['A', 'T', 'G', 'C'] : ['A', 'U', 'G', 'C'];
+
+            // Check for invalid characters
+            for (let char of sequence) {
+                if (!validChars.includes(char)) {
+                    document.getElementById("output").innerHTML = `<span class="error">Error: Invalid character '${char}' for ${choice} sequence.</span>`;
+                    document.getElementById("hydrogenBonds").innerText = ''; // Clear bond count on error
+                    return;
+                }
+            }
+
+            // Convert sequence and calculate hydrogen bonds
+            if (choice === 'DNA') {
+                for (let char of sequence) {
+                    const pair = dnaSequence[char];
+                    complement += pair;
+                    hydrogenBondCount += (char === 'A' || char === 'T') ? 2 : 3;
+                }
+            } else if (choice === 'RNA') {
+                for (let char of sequence) {
+                    const pair = rnaSequence[char];
+                    complement += pair;
+                    hydrogenBondCount += (char === 'A' || char === 'U') ? 2 : 3;
+                }
+            }
+
+            // Display results
+            document.getElementById("output").innerText = `Complementary Sequence: ${complement}`;
+            document.getElementById("hydrogenBonds").innerText = `Total Hydrogen Bonds: ${hydrogenBondCount}`;
+        }
+    </script>
+</body>
+</html>
